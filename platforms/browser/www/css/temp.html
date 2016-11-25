@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="msapplication-tap-highlight" content="no" />
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width" />
+    <!-- This is a wide open CSP declaration. To lock this down for production, see below. -->
+     <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval';" />
+    <!-- Good default declaration:
+    * gap: is required only on iOS (when using UIWebView) and is needed for JS->native communication
+    * https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
+    * Disables use of eval() and inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
+        * Enable inline JS: add 'unsafe-inline' to default-src
+        * Enable eval(): add 'unsafe-eval' to default-src
+    * Create your own at http://cspisawesome.com
+    -->
+    <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: 'unsafe-inline' https://ssl.gstatic.com; style-src 'self' 'unsafe-inline'; media-src *" /> -->
+
+    <link rel="stylesheet" type="text/css" href="css/index.css" />
+    <title>Locus - Driver</title>
+</head>
+
+<body>
+    <div class="app" id="maparea">
+        <button id="ping"> 
+            <svg class="i-plus" viewBox="0 0 32 32" width="24" height="24" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+                <path d="M16 2 L16 30 M2 16 L30 16" />
+            </svg>
+        </button>
+    </div>
+    <script type="text/javascript" src="cordova.js"></script>
+    <script type="text/javascript" src="js/index.js"></script>
+    <script type="text/javascript" src="js/jquery-1.12.4.min.js"></script>
+    <script src="https://cdn.pubnub.com/pubnub.min.js"></script>
+    <!-- <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.3.7.1.js"></script> -->
+    <script type="text/javascript">
+    var map,
+        infoWindow;
+
+    function initMap( lt , ln) {
+        map = new google.maps.Map(document.getElementById('maparea'), {
+          center: {lat: 15.3653923, lng: 75.137159},
+          zoom: 17
+        });
+        infoWindow = new google.maps.InfoWindow({map: map});
+
+        // Try HTML5 geolocation.
+        // if(lt != undefined && ln!= undefined){
+            var pos = {
+              lat: lt,
+              lng: ln
+            };
+            console.log("pos",pos)
+
+            infoWindow.setPosition(pos);
+            infoWindow.setContent('Me');
+            map.setCenter(pos);
+        // }else
+        // if (navigator.geolocation) {
+        //   navigator.geolocation.getCurrentPosition(function(position) {
+        //     var pos = {
+        //       lat: position.coords.latitude,
+        //       lng: position.coords.longitude
+        //     };                                                                                                                                                 
+
+
+        //     infoWindow.setPosition(pos);
+        //     infoWindow.setContent('Me');
+        //     map.setCenter(pos);
+        //   }, function() {
+        //     handleLocationError(true, infoWindow, map.getCenter());
+        //   });
+        // } else {
+        //   handleLocationError(false, infoWindow, map.getCenter());
+        // }
+      }
+
+      function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+        infoWindow.setPosition(pos);
+        infoWindow.setContent(browserHasGeolocation ?
+                              'Error: The Geolocation service failed.' :
+                              'Error: Your browser doesn\'t support geolocation.');
+      }
+
+      
+
+    
+        var PUBNUB_demo = PUBNUB.init({
+          publish_key: 'pub-c-0399b409-656b-4b39-b11a-b8ddec8f8c0e',
+          subscribe_key: 'sub-c-e9cb18a6-b1b5-11e6-8319-02ee2ddab7fe'
+        });
+        
+        // PUBNUB_demo.subscribe({
+        //   channel: 'locus',
+        //   message: function(m){console.log(m)},
+        //   connect : publish
+        // });
+        
+
+        window.setInterval(function(){
+          // var pos = {
+          //   lat: "",
+          //   lng: ""
+          // };
+          navigator.geolocation.getCurrentPosition(function(position) {
+            var pos = {
+             lat : position.coords.latitude,
+              lng : position.coords.longitude
+            }
+            console.log(pos)
+            PUBNUB_demo.publish({
+              channel: 'locus',
+              message: pos
+            });
+            }, function() {
+              handleLocationError(true, infoWindow, map.getCenter());
+            });
+          
+        },3000);
+
+        function publish(){
+
+          var pos;
+          navigator.geolocation.getCurrentPosition(function(position) {
+            pos = {
+             lat : position.coords.latitude,
+              lng : position.coords.longitude
+            }
+            initMap(position.coords.latitude,position.coords.longitude)
+            }, function() {
+              handleLocationError(true, infoWindow, map.getCenter());
+            });
+
+
+          PUBNUB_demo.publish({
+            channel: 'locus',
+            message: { pos }
+          });
+        }
+
+        $("#ping").on("click",function(){
+        // initMap();
+        publish();
+      })
+        
+
+    </script>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD83jelR9_-yssrn_dbMcEKdC211qHhSFI"
+    async defer></script>
+
+</body>
+
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval';" />
+<title>Geo Location</title>
+<style type="text/css">
+html { height: 100% }
+body { height: 100%; margin: 0; padding: 0 }
+#map-canvas { height: 100% }
+</style>
+<script type="text/javascript" src="cordova.js"></script>
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD83jelR9_-yssrn_dbMcEKdC211qHhSFI"></script>
+<script type="text/javascript">
+function onSuccess(position) {
+var element = document.getElementById('geolocation');
+element.innerHTML = 'Latitude: ' + position.coords.latitude + '<br />' +
+'Longitude: ' + position.coords.longitude + '<br />' +
+'<hr />' + element.innerHTML;
+var lat=position.coords.latitude;
+var lang=position.coords.longitude;
+var myLatlng = new google.maps.LatLng(lat,lang);
+var mapOptions = {zoom: 4,center: myLatlng}
+var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+var marker = new google.maps.Marker({position: myLatlng,map: map});
+}
+function onError(error) {
+alert('code: ' + error.code + '\n' +
+'message: ' + error.message + '\n');
+}
+var watchID = navigator.geolocation.watchPosition(onSuccess, onError, { timeout: 3000 });
+google.maps.event.addDomListener(window, 'load', onSuccess);
+</script>
+</head>
+<body>
+<div id="geolocation"></div>
+<div id="map-canvas"></div>
+</body>
+</html>

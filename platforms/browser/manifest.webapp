@@ -1,6 +1,6 @@
 {
-  "name": "My App",
-  "description": "Description of your app",
+  "name": "Locus",
+  "description": "locate your bus",
   "launch_path": "/index.html",
   "icons": {
     "128": "/img/logo.png"
