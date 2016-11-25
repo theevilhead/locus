@@ -69,6 +69,4 @@
     <platform name="android">
         <allow-intent href="market:*" />
     </platform>
-    <preference name="permissions" value="none"/>
-    <gap:plugin name="org.apache.cordova.geolocation" />
 </widget>
