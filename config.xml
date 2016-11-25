@@ -58,6 +58,8 @@
     <feature name="http://api.phonegap.com/1.0/file"/>
     <feature name="http://api.phonegap.com/1.0/geolocation"/>
     <access origin="*" />
+    <access origin="http://google.com" subdomains="true" />
+    <access origin="https://google.com" subdomains="true" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
     <allow-intent href="tel:*" />
@@ -67,4 +69,6 @@
     <platform name="android">
         <allow-intent href="market:*" />
     </platform>
+    <preference name="permissions" value="none"/>
+    <gap:plugin name="org.apache.cordova.geolocation" />
 </widget>

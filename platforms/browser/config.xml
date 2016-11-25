@@ -15,12 +15,16 @@
     </author>
     <content src="index.html" />
     <access origin="*" />
+    <access origin="http://google.com" subdomains="true" />
+    <access origin="https://google.com" subdomains="true" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
     <allow-intent href="tel:*" />
     <allow-intent href="sms:*" />
     <allow-intent href="mailto:*" />
     <allow-intent href="geo:*" />
+    <gap:plugin name="org.apache.cordova.geolocation" />
     <preference name="DisallowOverscroll" value="true" />
     <preference name="android-minSdkVersion" value="14" />
+    <preference name="permissions" value="none" />
 </widget>
